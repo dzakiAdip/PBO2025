@@ -1,0 +1,114 @@
+// Mengimpor kelas-kelas dari package javax.swing
+import javax.swing.*; // digunakan untuk membuat komponen GUI (misalnya tombol, kolom teks, dan jendela).
+
+// Mengimpor kelas-kelas dari package java.awt
+import java.awt.*; // digunakan untuk pengaturan layout dan elemen grafis lainnya.
+
+// Mengimpor kelas-kelas dari package java.awt.event
+import java.awt.event.*; // digunakan untuk menangani event (misalnya klik tombol).
+
+// Kelas SignUpFrame mewarisi JFrame, menunjukkan pewarisan (Inheritance)
+// JFrame sendiri merupakan bagian dari library 'javax.swing', dan isi class nya sudah otomatis dari library-nya
+public class SignUpFrame extends JFrame {
+
+    // Deklarasi atribut yang akan digunakan di dalam kelas ini (Enkapsulasi: private members)
+    // Enkapsulasi hanya dapat diakses dan dimodifikasi melalui method dalam kelas itu sendiri
+    // kenapa? karena menggunakan private, artinya hanya bisa diakses dalam kelas 'SignUpFrame'
+    // biar apa? melindungi data agar tidak sembarang diubah dari luar kelas
+    private final JTextField usernameField;
+    private final JPasswordField passwordField;
+    private JButton signUpButton;
+
+    // Konstruktor kelas SignUpFrame untuk inisialisasi frame dan komponen UI
+    public SignUpFrame() {
+        // Pengaturan judul frame
+        setTitle("Sign Up");
+        // Pengaturan ukuran frame
+        // constructor otomatis dari library 'java.awt'
+        setSize(400, 300);
+        // Menetapkan operasi default ketika frame ditutup (misalnya menutup aplikasi)
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // Menempatkan frame di tengah layar
+        setLocationRelativeTo(null);
+
+        // Membuat panel untuk menampung komponen-komponen UI
+        JPanel panel = new JPanel(); // JPanel, abstraksi
+        panel.setLayout(null);  // Layout null artinya komponen akan diposisikan secara manual
+        panel.setBackground(new Color(33, 37, 41));  // Latar belakang gelap, memberi kesan profesional
+
+        // Label untuk judul "Sign Up"
+        JLabel titleLabel = new JLabel("Sign Up", SwingConstants.CENTER);  // Label dengan posisi di tengah
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));  // Mengatur font dan ukuran
+        titleLabel.setForeground(Color.WHITE);  // Warna teks putih
+        titleLabel.setBounds(100, 30, 200, 30);  // Menetapkan posisi dan ukuran label
+        panel.add(titleLabel);  // Menambahkan label ke panel
+
+        // Label untuk username
+        JLabel usernameLabel = new JLabel("Username:");
+        usernameLabel.setForeground(Color.WHITE);  // Warna teks putih
+        usernameLabel.setBounds(50, 90, 100, 25);  // Posisi dan ukuran label
+        panel.add(usernameLabel);
+
+        // Kolom input untuk username
+        usernameField = new JTextField();  // Menggunakan JTextField untuk input teks; JTextField, abstraksi
+        usernameField.setPreferredSize(new Dimension(200, 25));  // Menentukan ukuran kolom input
+        usernameField.setBounds(150, 90, 200, 25);  // Posisi dan ukuran kolom input
+        panel.add(usernameField);  // Menambahkan kolom input ke panel
+
+        // Label untuk password
+        JLabel passwordLabel = new JLabel("Password:"); // JLabel, abstraksi
+        passwordLabel.setForeground(Color.WHITE);  // Warna teks putih
+        passwordLabel.setBounds(50, 130, 100, 25);  // Posisi dan ukuran label
+        panel.add(passwordLabel);
+
+        // Kolom input untuk password (menggunakan JPasswordField untuk keamanan)
+        passwordField = new JPasswordField(); // JPasswordField, abstraksi
+        passwordField.setPreferredSize(new Dimension(200, 25));  // Menentukan ukuran kolom input
+        passwordField.setBounds(150, 130, 200, 25);  // Posisi dan ukuran kolom input
+        panel.add(passwordField);  // Menambahkan kolom input ke panel
+
+        // Tombol untuk melakukan sign-up
+        signUpButton = new JButton("Sign Up"); // JButton, abstraksi
+        signUpButton.setBackground(new Color(0, 123, 255));  // Tombol berwarna biru
+        signUpButton.setForeground(Color.WHITE);  // Warna teks putih
+        signUpButton.setFocusPainted(false);  // Menghilangkan border ketika tombol dalam fokus
+        signUpButton.setBounds(150, 180, 100, 30);  // Posisi dan ukuran tombol
+        panel.add(signUpButton);  // Menambahkan tombol ke panel
+
+        // Menambahkan ActionListener untuk menangani kejadian klik pada tombol
+        // Interface, biar bisa multitasking
+        // bisa digunakan tanpa harus melepas kelas induk
+        // kenapa ActionListener? saat user melakukan suatu tindakan, terjadi namanya 'event'
+        // ActionListener bertugas dengerin 'event' tersebut dan jalanin kode tertentu sbg respons
+        // method actionPerformed dipanggil, buat buat jalanin kode sesuai 'event' tersebut
+        signUpButton.addActionListener(new ActionListener() {
+            // Metode yang dipanggil ketika tombol di-klik
+            @Override
+            // actionPerformed, Polimorfisme
+            // method sama tapi implementasi aksi berbeda, tergantung pada siapa yg memanggilnya
+            // method wajib yg harus diimplementasikan, kalo menggunakan actionListener
+            public void actionPerformed(ActionEvent e) {
+                // Mendapatkan nilai dari kolom input username dan password
+                String username = usernameField.getText();
+                String password = new String(passwordField.getPassword());
+
+                // Mengecek apakah kedua kolom diisi
+                if (!username.isEmpty() && !password.isEmpty()) {
+                    // Menambahkan data pengguna jika tidak kosong
+                    LoginFrame.addUser(username, password);  // Menyimpan data pengguna
+                    JOptionPane.showMessageDialog(null, "Sign-up successful! Please login.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    dispose();  // Menutup frame sign-up setelah berhasil
+                    new LoginFrame();  // Membuka frame login setelah sign-up
+                } else {
+                    // Menampilkan pesan jika ada kolom yang kosong
+                    JOptionPane.showMessageDialog(null, "Please fill out all fields.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        // Menambahkan panel ke dalam frame
+        add(panel);
+        // Menampilkan frame
+        setVisible(true);
+    }
+}
