@@ -31,12 +31,39 @@ Aplikasi To-Do List ini memungkinkan pengguna untuk mendaftar dan masuk mengguna
   - Jika username dan password terisi, data pengguna baru akan disimpan dalam `HashMap` milik `LoginFrame`.
   - Pesan sukses ditampilkan, dan aplikasi akan mengalihkan pengguna ke halaman login.
   - Jika kolom kosong, pesan kesalahan akan ditampilkan.
+ 
+### 3. `ToDoListFrame.java`
+- **Fungsi**: Membuat jendela utama aplikasi daftar tugas.
+- **Komponen Utama**:
+  - `JTextField` dan `JTextArea` untuk menerima input teks, seperti nama tugas dan deskripsi.
+  - `JDialog` untuk membuat dialog pop-up untuk menambah atau mengedit tugas.
+  - `JButton` untuk interaksi pengguna, seperti menambah, mengedit, dan menghapus tugas.
+  - `JList` untuk menampilkan daftar tugas di UI.
+  - `DefaultListModel` untuk menyimpan dan mengelola data untuk `JList` yang berisi daftar tugas.
+- **Logika**:
+  - Ketika tombol "Add Task" diklik, jendela input muncul untuk memasukkan nama tugas baru.
+  - Pengguna dapat memilih tugas dari daftar untuk mengeditnya.
+  - Setiap tugas disimpan dalam objek `Task` yang berisi nama tugas.
+  - Pengguna dapat memilih tugas dari daftar dan mengklik tombol `Delete`.
+  - Pengguna dapat menandai tugas yang telah diselesaikan.
+  - Setelah tugas ditambahkan, diedit, dihapus, atau ditandai selesai, maka tampilan `JList` akan diperbarui untuk mencerminkan perubahan.
+  - Menggunakan `ActionListener` untuk menangani event dari tombol.
+  - Saat menambahkan atau mengedit tugas, validasi dilakukan untuk memastikan nama tugas tidak kosong.
+ 
+### 4. `ToDoListApp.java`
+- **Fungsi**: Kode ini memulai aplikasi dengan membuka jendela login.
+- **Komponen Utama**:
+  - `ToDoListApp` merupakan kelas utama yang menjalankan aplikasi.
+  - `main` **method** merupakan titik masuk utama dari aplikasi ini.
+  - `LoginFrame` adalah class yang menangani jendela Login, akan dibuka ketika aplikasi dimulai.
+- **Logika**:
+  - Ketika aplikasi dijalankan, metode `main` membuat objek `LoginFrame`, yang akan menampilkan jendela **Login**.
 
-### 3. Desain Antarmuka
+### 5. Desain Antarmuka
 - Menggunakan `GridBagLayout` di `LoginFrame` untuk tata letak responsif.
 - Menggunakan layout `null` di `SignUpFrame` untuk penataan manual komponen.
 
-### 4. Pengelolaan Data Pengguna
+### 6. Pengelolaan Data Pengguna
 - Data pengguna (username dan password) disimpan dalam `HashMap` di kelas `LoginFrame`.
 - Pengguna yang terdaftar dapat memverifikasi kredensial mereka melalui proses login.
 
@@ -50,6 +77,5 @@ Aplikasi To-Do List ini memungkinkan pengguna untuk mendaftar dan masuk mengguna
 - **Java AWT**: Untuk pengaturan layout dan pengelolaan event.
 - **HashMap**: Untuk menyimpan data pengguna sementara.
 
-## Kontribusi
-Jika Anda tertarik untuk berkontribusi, silakan buka issue atau buat pull request!
-
+## Lisensi
+Proyek ini dilisensikan di bawah MIT License
