@@ -1,6 +1,12 @@
+# PROYEK AKHIR PBO 2025
 # Aplikasi To-Do List Sederhana
 
-## Deskripsi
+### Anggota Kelompok:
+- **Muhammad Thoriq Dzaki** NIM `23000 18216`
+- **Anfaldi Fernanda** NIM `23000 18221`
+- **Zaidan Ahmad Ath Thoriq** NIM `23000 18222`
+
+## Deskripsi Singkat
 Aplikasi To-Do List ini memungkinkan pengguna untuk mendaftar dan masuk menggunakan sistem otentikasi berbasis username dan password. Setelah berhasil masuk, pengguna dapat mengakses dan mengelola daftar tugas mereka.
 
 ## Fitur
