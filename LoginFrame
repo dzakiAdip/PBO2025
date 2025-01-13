@@ -1,0 +1,122 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.HashMap;
+
+public class LoginFrame extends JFrame {  // Kelas LoginFrame mewarisi JFrame, menunjukkan pewarisan (Inheritance)
+    private final JTextField usernameField;
+    private final JPasswordField passwordField;
+    private JButton loginButton, signUpButton;
+
+    // Menyimpan data pengguna (username dan password) dalam HashMap (penerapan struktur data di OOP)
+    private static HashMap<String, String> users = new HashMap<>();  // Enkapsulasi data pengguna
+
+    // Konstruktor LoginFrame untuk inisialisasi frame dan komponen UI
+    public LoginFrame() {
+        setTitle("TO DO LIST");  // Mengatur judul frame
+        setSize(400, 300);  // Menetapkan ukuran frame
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // Menutup aplikasi saat frame ditutup
+        setLocationRelativeTo(null);  // Menempatkan frame di tengah layar
+
+        // Membuat panel untuk menampung komponen-komponen UI dengan layout GridBagLayout
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());  // Menggunakan GridBagLayout untuk tata letak responsif
+        panel.setBackground(new Color(33, 37, 41));  // Latar belakang gelap untuk desain profesional
+
+        // Membuat objek GridBagConstraints untuk mengatur posisi komponen
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);  // Menambahkan padding di sekitar komponen
+
+        // Label judul "TO DO LIST"
+        JLabel titleLabel = new JLabel("TO DO LIST", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));  // Font dan ukuran label
+        titleLabel.setForeground(Color.WHITE);  // Warna teks putih
+        gbc.gridwidth = 2;  // Menyebar label di dua kolom
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(titleLabel, gbc);  // Menambahkan label ke panel
+
+        // Label untuk username
+        JLabel usernameLabel = new JLabel("Username:");
+        usernameLabel.setForeground(Color.WHITE);  // Warna teks putih
+        gbc.gridwidth = 1;  // Reset kolom ke 1
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(usernameLabel, gbc);  // Menambahkan label username ke panel
+
+        // Kolom input untuk username
+        usernameField = new JTextField(20);
+        gbc.gridx = 1;
+        panel.add(usernameField, gbc);  // Menambahkan kolom input username ke panel
+
+        // Label untuk password
+        JLabel passwordLabel = new JLabel("Password:");
+        passwordLabel.setForeground(Color.WHITE);  // Warna teks putih
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        panel.add(passwordLabel, gbc);  // Menambahkan label password ke panel
+
+        // Kolom input untuk password
+        passwordField = new JPasswordField(20);
+        gbc.gridx = 1;
+        panel.add(passwordField, gbc);  // Menambahkan kolom input password ke panel
+
+        // Tombol Sign Up
+        signUpButton = new JButton("SIGN UP");
+        signUpButton.setBackground(new Color(0, 123, 255));  // Tombol berwarna biru
+        signUpButton.setForeground(Color.WHITE);  // Warna teks putih
+        signUpButton.setFocusPainted(false);  // Menghilangkan border ketika tombol dalam fokus
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;  // Tombol Sign Up memanjang di seluruh kolom
+        panel.add(signUpButton, gbc);
+
+        // Tombol Login
+        loginButton = new JButton("LOGIN");
+        loginButton.setBackground(new Color(40, 167, 69));  // Tombol berwarna hijau
+        loginButton.setForeground(Color.WHITE);  // Warna teks putih
+        loginButton.setFocusPainted(false);  // Menghilangkan border ketika tombol dalam fokus
+        gbc.gridy = 4;
+        panel.add(loginButton, gbc);  // Menambahkan tombol login ke panel
+
+        // Logika untuk tombol Login
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = usernameField.getText();
+                String password = new String(passwordField.getPassword());
+
+                // Mengecek apakah username ada dan password sesuai
+                if (users.containsKey(username) && users.get(username).equals(password)) {
+                    dispose();  // Menutup frame login
+                    new ToDoListFrame();  // Membuka frame ToDoList setelah login berhasil
+                } else {
+                    // Menampilkan pesan jika username atau password salah
+                    JOptionPane.showMessageDialog(null, "Invalid username or password!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        // Logika untuk tombol Sign Up
+        signUpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new SignUpFrame();  // Membuka frame sign-up
+                dispose();  // Menutup frame login
+            }
+        });
+
+        // Menambahkan panel ke frame
+        add(panel);
+        setVisible(true);  // Menampilkan frame
+    }
+
+    // Metode untuk menambah pengguna (digunakan untuk autentikasi login)
+    public static void addUser(String username, String password) {
+        users.put(username, password);  // Menyimpan username dan password ke dalam HashMap
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new LoginFrame());  // Membuka frame login saat aplikasi dijalankan
+    }
+}
