@@ -1,4 +1,7 @@
 # PROYEK AKHIR PBO 2025
+## Tahun Akademik Gasal 2024/2025
+#### Dosen Pengampu : Supriyanto, S.T., M.T.
+
 # Aplikasi To-Do List Sederhana
 
 ### Anggota Kelompok:
