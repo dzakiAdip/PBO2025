@@ -1,0 +1,393 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+
+public class ToDoListFrame extends JFrame {
+    private ArrayList<String> tasks;
+    private ArrayList<Boolean> taskStatus;
+    private DefaultListModel<String> taskListModel;
+    private JList<String> taskList;
+    private JTextField taskField;
+
+    public ToDoListFrame() {
+        tasks = new ArrayList<>();
+        taskStatus = new ArrayList<>();
+        taskListModel = new DefaultListModel<>();
+
+        setTitle("To-Do List");
+        setSize(600, 450);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        // Dark-themed panel
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        panel.setBackground(new Color(45, 45, 45)); // Dark background color
+
+        // Title Label
+        JLabel titleLabel = new JLabel("My Task", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
+        titleLabel.setForeground(new Color(255, 255, 255)); // White text color
+        titleLabel.setBackground(new Color(60, 63, 65)); // Dark background color for title label
+        titleLabel.setOpaque(true); // Ensures the background color is visible
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+        panel.add(titleLabel, BorderLayout.NORTH);
+
+        // Task List
+        taskList = new JList<>(taskListModel);
+        taskList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        taskList.setBackground(new Color(60, 63, 65)); // Darker background for list
+        taskList.setForeground(Color.WHITE); // White text for list
+        JScrollPane scrollPane = new JScrollPane(taskList);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(63, 81, 181), 2));
+
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        JLabel centerLabel = new JLabel("My Task", SwingConstants.CENTER);
+        centerLabel.setFont(new Font("Arial", Font.BOLD, 40));
+        centerLabel.setForeground(new Color(63, 81, 181));
+        centerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        centerPanel.add(centerLabel);
+        centerPanel.add(scrollPane);
+
+        panel.add(centerPanel, BorderLayout.CENTER);
+
+        // Button Panel
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(1, 4, 10, 10));
+        buttonPanel.setBackground(new Color(45, 45, 45)); // Dark background color
+
+        // Add Task Button
+        JButton addButton = new JButton("Add Task");
+        styleButton(addButton);
+        buttonPanel.add(addButton);
+
+        // Edit Task Button
+        JButton editButton = new JButton("Edit Task");
+        styleButton(editButton);
+        buttonPanel.add(editButton);
+
+        // Remove Task Button
+        JButton removeButton = new JButton("Remove Task");
+        styleButton(removeButton);
+        buttonPanel.add(removeButton);
+
+        // Finish Task Button
+        JButton finishButton = new JButton("Finish Task");
+        styleButton(finishButton);
+        buttonPanel.add(finishButton);
+
+        panel.add(buttonPanel, BorderLayout.SOUTH);
+
+        // Input Field for Task
+        taskField = new JTextField(20);
+        taskField.setFont(new Font("Arial", Font.PLAIN, 14));
+        taskField.setBorder(BorderFactory.createLineBorder(new Color(63, 81, 181), 1));
+        taskField.setBackground(new Color(60, 63, 65)); // Dark background for input field
+        taskField.setForeground(Color.WHITE); // White text in input field
+        taskField.setToolTipText("Enter a task here");
+        panel.add(taskField, BorderLayout.NORTH);
+
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showAddTaskDialog();
+            }
+        });
+
+        editButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedIndex = taskList.getSelectedIndex();
+                if (selectedIndex != -1) {
+                    // Open edit dialog for the selected task
+                    showEditTaskDialog(selectedIndex);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please select a task to edit!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedIndex = taskList.getSelectedIndex();
+                if (selectedIndex != -1) {
+                    tasks.remove(selectedIndex);
+                    taskStatus.remove(selectedIndex);
+                    taskListModel.remove(selectedIndex);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please select a task to remove!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        finishButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedIndex = taskList.getSelectedIndex();
+                if (selectedIndex != -1) {
+                    taskStatus.set(selectedIndex, true);
+                    String updatedTask = tasks.get(selectedIndex) + " - Completed";
+                    taskListModel.set(selectedIndex, updatedTask);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please select a task to mark as finished!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        add(panel);
+        setVisible(true);
+    }
+
+    private void styleButton(JButton button) {
+        button.setBackground(new Color(63, 81, 181));
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setFont(new Font("Arial", Font.PLAIN, 14));
+        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+        // Add hover effect
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setBackground(new Color(81, 98, 228)); // Slightly darker shade
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setBackground(new Color(63, 81, 181)); // Original color
+            }
+        });
+    }
+
+    private void showAddTaskDialog() {
+        // Dialog for adding a task
+        JDialog addTaskDialog = new JDialog(this, "Add New Task", true);
+        addTaskDialog.setLayout(new CardLayout());
+        addTaskDialog.setSize(320, 300);
+        addTaskDialog.setLocationRelativeTo(this);
+
+        JPanel cardPanel = new JPanel();
+        cardPanel.setLayout(new CardLayout());
+
+        // Step 1: Task Type (Personal or Work)
+        JPanel step1Panel = new JPanel();
+        step1Panel.setLayout(new BorderLayout());
+        JLabel taskTypeLabel = new JLabel("Task Type:");
+        JComboBox<String> taskTypeComboBox = new JComboBox<>(new String[] {"Personal", "Work"});
+        taskTypeComboBox.setPreferredSize(new Dimension(160, 25));
+        JButton nextButton1 = new JButton("Next");
+        nextButton1.setBackground(new Color(63, 81, 181));
+        nextButton1.setForeground(Color.WHITE);
+        nextButton1.setFocusPainted(false);
+        step1Panel.add(taskTypeLabel, BorderLayout.NORTH);
+        step1Panel.add(taskTypeComboBox, BorderLayout.CENTER);
+        step1Panel.add(nextButton1, BorderLayout.SOUTH);
+
+        // Step 2: Task Name
+        JPanel step2Panel = new JPanel();
+        step2Panel.setLayout(new BorderLayout());
+        JLabel taskNameLabel = new JLabel("Task Name:");
+        JTextField taskNameField = new JTextField(12);
+        taskNameField.setPreferredSize(new Dimension(160, 25));
+        JButton nextButton2 = new JButton("Next");
+        nextButton2.setBackground(new Color(63, 81, 181));
+        nextButton2.setForeground(Color.WHITE);
+        nextButton2.setFocusPainted(false);
+        step2Panel.add(taskNameLabel, BorderLayout.NORTH);
+        step2Panel.add(taskNameField, BorderLayout.CENTER);
+        step2Panel.add(nextButton2, BorderLayout.SOUTH);
+
+        // Step 3: Description
+        JPanel step3Panel = new JPanel();
+        step3Panel.setLayout(new BorderLayout());
+        JLabel taskDescLabel = new JLabel("Description:");
+        JTextArea taskDescField = new JTextArea(3, 12);
+        JScrollPane scrollDescPane = new JScrollPane(taskDescField);
+        taskDescField.setPreferredSize(new Dimension(160, 70));
+        JButton nextButton3 = new JButton("Next");
+        nextButton3.setBackground(new Color(63, 81, 181));
+        nextButton3.setForeground(Color.WHITE);
+        nextButton3.setFocusPainted(false);
+        step3Panel.add(taskDescLabel, BorderLayout.NORTH);
+        step3Panel.add(scrollDescPane, BorderLayout.CENTER);
+        step3Panel.add(nextButton3, BorderLayout.SOUTH);
+
+        // Step 4: Deadline
+        JPanel step4Panel = new JPanel();
+        step4Panel.setLayout(new BorderLayout());
+        JLabel taskDeadlineLabel = new JLabel("Deadline (yyyy-mm-dd):");
+        JTextField taskDeadlineField = new JTextField(10);
+        taskDeadlineField.setPreferredSize(new Dimension(160, 25));
+        JButton finishButton = new JButton("Finish");
+        finishButton.setBackground(new Color(63, 81, 181));
+        finishButton.setForeground(Color.WHITE);
+        finishButton.setFocusPainted(false);
+        step4Panel.add(taskDeadlineLabel, BorderLayout.NORTH);
+        step4Panel.add(taskDeadlineField, BorderLayout.CENTER);
+        step4Panel.add(finishButton, BorderLayout.SOUTH);
+
+        // Menambahkan langkah-langkah ke dalam panel
+        cardPanel.add(step1Panel, "Step1");
+        cardPanel.add(step2Panel, "Step2");
+        cardPanel.add(step3Panel, "Step3");
+        cardPanel.add(step4Panel, "Step4");
+
+        addTaskDialog.add(cardPanel);
+
+        // Navigasi antar langkah
+        nextButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CardLayout cl = (CardLayout) cardPanel.getLayout();
+                cl.show(cardPanel, "Step2");
+            }
+        });
+
+        nextButton2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CardLayout cl = (CardLayout) cardPanel.getLayout();
+                cl.show(cardPanel, "Step3");
+            }
+        });
+
+        nextButton3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CardLayout cl = (CardLayout) cardPanel.getLayout();
+                cl.show(cardPanel, "Step4");
+            }
+        });
+
+        finishButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String taskName = taskNameField.getText().trim();
+                String taskDesc = taskDescField.getText().trim();
+                String taskDeadline = taskDeadlineField.getText().trim();
+
+                if (taskDeadline.isEmpty()) {
+                    JOptionPane.showMessageDialog(addTaskDialog, "Please enter a deadline!", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    String newTask = taskName + " - " + taskDesc + " - Deadline: " + taskDeadline;
+                    tasks.add(newTask);
+                    taskStatus.add(false);
+                    taskListModel.addElement(newTask);
+                    addTaskDialog.dispose();
+                }
+            }
+        });
+
+        addTaskDialog.setVisible(true);
+    }
+
+    private void showEditTaskDialog(int selectedIndex) {
+        String taskToEdit = tasks.get(selectedIndex);
+        String[] taskParts = taskToEdit.split(" - ");
+        String taskName = taskParts[0];
+        String taskDesc = taskParts.length > 1 ? taskParts[1] : "";
+        String taskDeadline = taskParts.length > 2 ? taskParts[2].replace("Deadline: ", "") : "";
+
+        JDialog editTaskDialog = new JDialog(this, "Edit Task", true);
+        editTaskDialog.setLayout(new CardLayout());
+        editTaskDialog.setSize(320, 300);
+        editTaskDialog.setLocationRelativeTo(this);
+
+        JPanel cardPanel = new JPanel();
+        cardPanel.setLayout(new CardLayout());
+
+        // Step 1: Task Name
+        JPanel step2Panel = new JPanel();
+        step2Panel.setLayout(new BorderLayout());
+        JLabel taskNameLabel = new JLabel("Task Name:");
+        JTextField taskNameField = new JTextField(taskName, 12);
+        taskNameField.setPreferredSize(new Dimension(160, 25));
+        JButton nextButton2 = new JButton("Next");
+        nextButton2.setBackground(new Color(63, 81, 181));
+        nextButton2.setForeground(Color.WHITE);
+        nextButton2.setFocusPainted(false);
+        step2Panel.add(taskNameLabel, BorderLayout.NORTH);
+        step2Panel.add(taskNameField, BorderLayout.CENTER);
+        step2Panel.add(nextButton2, BorderLayout.SOUTH);
+
+        // Step 3: Description
+        JPanel step3Panel = new JPanel();
+        step3Panel.setLayout(new BorderLayout());
+        JLabel taskDescLabel = new JLabel("Description:");
+        JTextArea taskDescField = new JTextArea(taskDesc, 3, 12);
+        JScrollPane scrollDescPane = new JScrollPane(taskDescField);
+        taskDescField.setPreferredSize(new Dimension(160, 70));
+        JButton nextButton3 = new JButton("Next");
+        nextButton3.setBackground(new Color(63, 81, 181));
+        nextButton3.setForeground(Color.WHITE);
+        nextButton3.setFocusPainted(false);
+        step3Panel.add(taskDescLabel, BorderLayout.NORTH);
+        step3Panel.add(scrollDescPane, BorderLayout.CENTER);
+        step3Panel.add(nextButton3, BorderLayout.SOUTH);
+
+        // Step 4: Deadline
+        JPanel step4Panel = new JPanel();
+        step4Panel.setLayout(new BorderLayout());
+        JLabel taskDeadlineLabel = new JLabel("Deadline (yyyy-mm-dd):");
+        JTextField taskDeadlineField = new JTextField(taskDeadline, 10);
+        taskDeadlineField.setPreferredSize(new Dimension(160, 25));
+        JButton finishButton = new JButton("Finish");
+        finishButton.setBackground(new Color(63, 81, 181));
+        finishButton.setForeground(Color.WHITE);
+        finishButton.setFocusPainted(false);
+        step4Panel.add(taskDeadlineLabel, BorderLayout.NORTH);
+        step4Panel.add(taskDeadlineField, BorderLayout.CENTER);
+        step4Panel.add(finishButton, BorderLayout.SOUTH);
+
+        // Menambahkan langkah-langkah ke dalam panel
+        cardPanel.add(step2Panel, "Step2");
+        cardPanel.add(step3Panel, "Step3");
+        cardPanel.add(step4Panel, "Step4");
+
+        editTaskDialog.add(cardPanel);
+
+        // Navigasi antar langkah
+        nextButton2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CardLayout cl = (CardLayout) cardPanel.getLayout();
+                cl.show(cardPanel, "Step3");
+            }
+        });
+
+        nextButton3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CardLayout cl = (CardLayout) cardPanel.getLayout();
+                cl.show(cardPanel, "Step4");
+            }
+        });
+
+        finishButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String taskName = taskNameField.getText().trim();
+                String taskDesc = taskDescField.getText().trim();
+                String taskDeadline = taskDeadlineField.getText().trim();
+
+                if (taskDeadline.isEmpty()) {
+                    JOptionPane.showMessageDialog(editTaskDialog, "Please enter a deadline!", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    String updatedTask = taskName + " - " + taskDesc + " - Deadline: " + taskDeadline;
+                    tasks.set(selectedIndex, updatedTask);
+                    taskListModel.set(selectedIndex, updatedTask);
+                    editTaskDialog.dispose();
+                }
+            }
+        });
+
+        editTaskDialog.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        new ToDoListFrame();
+    }
+}
