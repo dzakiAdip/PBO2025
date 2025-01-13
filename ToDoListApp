@@ -1,0 +1,6 @@
+public class ToDoListApp {
+    public static void main(String[] args) {
+        // Start the application by creating an instance of LoginFrame
+        new LoginFrame();  // This opens the login window when the app starts
+    }
+}
